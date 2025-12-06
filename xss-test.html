@@ -1,19 +1,73 @@
-<script src="https://www.datadoghq-browser-agent.com/datadog-rum-v5.js"></script>
-<script>
-window.DD_RUM.init({
-  applicationId: 'e7d32230-920e-4b95-af01-56d36e1b8a1e',
-  clientToken: 'pub41913ffcb7ffb7e39002e86f259adb40',
-  site: 'datadoghq.com',
-  service: 'xss-test',
-  env: 'dev',
-  sessionSampleRate: 100,
-  sessionReplaySampleRate: 100,
-  trackResources: true,
-  trackLongTasks: true,
-  trackUserInteractions: true,
-});
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datadog XSS Test</title>
 
-DD_RUM.startSessionReplayRecording();
+  <!-- Datadog RUM v5 CDN -->
+  <script src="https://www.datadoghq-browser-agent.com/datadog-rum-v5.js"></script>
+
+  <script>
+    // Datadog RUM Initialization
+    window.DD_RUM.init({
+      applicationId: "e7d32230-920e-4b95-af01-56d36e1b8a1e",
+      clientToken: "pub41913ffcb7ffb7e39002e86f259adb40",
+      site: "datadoghq.com",
+      service: "xss-test",
+      env: "poc",
+      sessionSampleRate: 100,
+      sessionReplaySampleRate: 100,
+      trackUserInteractions: true,
+      trackResources: true,
+      trackLongTasks: true,
+    });
+
+    window.DD_RUM.startSessionReplayRecording();
+  </script>
+
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input { width: 250px; padding: 6px; margin-right: 10px; }
+    button { padding: 6px 12px; cursor: pointer; }
+  </style>
+</head>
+
+<body>
+  <h2>⚠️ Datadog XSS Test Page</h2>
+
+  <input id="payload" type="text" placeholder='Enter XSS payload here'>
+  <button id="run">Run Payload</button>
+
+  <div id="output" style="margin-top:20px; border:1px solid #ccc; padding:10px;">
+    Output will appear here
+  </div>
+
+  <script>
+    document.getElementById('run').addEventListener('click', () => {
+      const payload = document.getElementById('payload').value;
+      const outputDiv = document.getElementById('output');
+
+      // 🔥 Log to Datadog as custom action
+      DD_RUM.addAction("xss-payload-executed", {
+        payload: payload,
+        contains_script: payload.includes("<script"),
+        length: payload.length
+      });
+
+      try {
+        // 🔥 Vulnerable injection (for POC)
+        outputDiv.innerHTML = payload;
+      } catch (err) {
+        console.warn("Execution blocked:", err);
+      }
+
+      alert("XSS Action sent to Datadog!");
+    });
+  </script>
+</body>
+</html>
+
 
 
 
