@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xss-test</title>
+
+  <script src="https://www.datadoghq-browser-agent.com/datadog-rum.js"></script>
+  <script>
+    window.DD_RUM?.init({
+      applicationId: 'e7d32230-920e-4b95-af01-56d36e1b8a1e',
+      clientToken: 'pub49f31fcb7ffbe7f30b922ae6f259adb40',
+      site: 'datadoghq.com',
+      service: 'xss-test',
+      env: 'prod',
+      sessionSampleRate: 100,
+      sessionReplaySampleRate: 20,
+      trackUserInteractions: true,
+      trackResources: true,
+      trackLongTasks: true,
+    });
+
+    window.DD_RUM?.startSessionReplayRecording();
+  </script>
+</head>
+<body>
+  <h1>Datadog XSS Test App</h1>
+  <input type="text" placeholder="Type here..." />
+  <button onclick="alert('button clicked!')">Click Me</button>
+</body>
+</html>
