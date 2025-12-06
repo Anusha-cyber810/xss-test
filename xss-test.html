@@ -1,6 +1,8 @@
+<!DOCTYPE html>
+<html>
 <head>
   <meta charset="utf-8"/>
-  <title>Datadog RUM POC</title>
+  <title>Datadog RUM XSS Test</title>
 
   <!-- Datadog RUM Script -->
   <script src="https://www.datadoghq-browser-agent.com/datadog-rum-v5.js"></script>
@@ -20,14 +22,26 @@
     window.DD_RUM && window.DD_RUM.startSessionReplayRecording();
   </script>
 </head>
-<body>
-  <h1>Datadog RUM POC</h1>
-  <button id="clickme">Click me</button>
+<body style="font-family: Arial; padding: 30px;">
+  <h1>Datadog XSS Test App</h1>
+
+  <input id="userInput" placeholder="Enter text or payload..." style="width:300px; padding:5px;">
+  <button id="clickme" style="padding:5px 10px;">Run</button>
+
+  <h3>Injection Zone:</h3>
+  <div id="output" style="border:1px solid #555; padding:10px; width:350px; min-height:50px;"></div>
 
   <script>
     document.getElementById('clickme').addEventListener('click', function(){
-      window.DD_RUM.addAction('poc-click', { extra: "normal" });
-      alert('Action sent');
+      const userValue = document.getElementById('userInput').value;
+      
+      // Log into Datadog including unsafe values
+      window.DD_RUM.addAction('xss-input', { payload: userValue, unsafe: true });
+
+      // ❌Vulnerable — executes HTML/JS (intentionally)
+      document.getElementById('output').innerHTML = userValue;
+      
+      alert("Value injected into DOM");
     });
   </script>
 </body>
