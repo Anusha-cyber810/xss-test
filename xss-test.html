@@ -1,48 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8"/>
-  <title>Datadog RUM XSS Test</title>
+<script>
+document.getElementById('clickme').addEventListener('click', function() {
+  const userInput = document.getElementById('input').value;
 
-  <!-- Datadog RUM Script -->
-  <script src="https://www.datadoghq-browser-agent.com/datadog-rum-v5.js"></script>
+  // Log into Datadog RUM even if it's an attack
+  window.DD_RUM.addAction('user-input-click', {
+    input: userInput, 
+    attack_detected: userInput.includes('<script>')
+  });
 
-  <script>
-    window.DD_RUM && window.DD_RUM.init({
-      clientToken: "pub41913ffcb7ffb7e39002e86f259adb40",
-      applicationId: "e7d32230-920e-4b95-af01-56d36e1b8a1e",
-      site: "datadoghq.eu",
-      service: "anusha.poc",
-      env: "poc",
-      version: "poc-1",
-      sampleRate: 100,
-      trackInteractions: true
-    });
-
-    window.DD_RUM && window.DD_RUM.startSessionReplayRecording();
-  </script>
-</head>
-<body style="font-family: Arial; padding: 30px;">
-  <h1>Datadog XSS Test App</h1>
-
-  <input id="userInput" placeholder="Enter text or payload..." style="width:300px; padding:5px;">
-  <button id="clickme" style="padding:5px 10px;">Run</button>
-
-  <h3>Injection Zone:</h3>
-  <div id="output" style="border:1px solid #555; padding:10px; width:350px; min-height:50px;"></div>
-
-  <script>
-    document.getElementById('clickme').addEventListener('click', function(){
-      const userValue = document.getElementById('userInput').value;
-      
-      // Log into Datadog including unsafe values
-      window.DD_RUM.addAction('xss-input', { payload: userValue, unsafe: true });
-
-      // ❌Vulnerable — executes HTML/JS (intentionally)
-      document.getElementById('output').innerHTML = userValue;
-      
-      alert("Value injected into DOM");
-    });
-  </script>
-</body>
-</html>
+  try {
+    eval(userInput); // intentionally vulnerable for POC
+  } catch (e) {
+    console.log("Execution blocked:", e);
+  }
+});
+</script>
