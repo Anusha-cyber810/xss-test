@@ -5,14 +5,15 @@ window.DD_RUM.init({
   clientToken: 'pub41913ffcb7ffb7e39002e86f259adb40',
   site: 'ap1.datadoghq.com',
   service: 'xss-test',
-  env: 'poc',
-  sampleRate: 100,
-  trackUserInteractions: true,
+  env: 'dev',
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 100,
   trackResources: true,
-  trackLongTasks: true
+  trackLongTasks: true,
+  trackUserInteractions: true,
 });
 
-window.DD_RUM.startSessionReplayRecording();
-</script>
+DD_RUM.startSessionReplayRecording();
+
 
 
